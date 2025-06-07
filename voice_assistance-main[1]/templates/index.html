@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>✨ IntelleX Voice Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      /*font-family: 'Roboto Condensed', sans-serif;  More techy font, and condensed*/
+      font-family: 'Open Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #0c1022; /* Dark, Stark background */
+      color: #e0e0e0;
+      /*background: linear-gradient(135deg, #4a148c, #1a237e); !* Darker gradient *!*/
+      /*animation: backgroundShift 10s infinite alternate; !* Removed background shift*!*/
+    }
+
+    @keyframes backgroundShift {
+      0% { background: linear-gradient(135deg, #4a148c, #1a237e); }
+      50% { background: linear-gradient(135deg, #1a237e, #0d47a1); }
+      100% { background: linear-gradient(135deg, #0d47a1, #0c1022); }
+    }
+
+    .container {
+      max-width: 800px; /* Wider container */
+      width: 100%;
+      padding: 60px;
+      background: rgba(0, 0, 0, 0.4); /* Slightly more transparent */
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 50px; /* Larger title */
+      margin-bottom: 25px;
+      /*text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); !* Subtler shadow *!*/
+      letter-spacing: 2px; /* More pronounced letter spacing */
+      color: #4dd0e1; /* A brighter cyan */
+    }
+
+    p {
+      font-size: 18px;
+      color: #b0bec5; /* Lighter, cooler text */
+      margin-bottom: 40px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .mic-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 30px;
+    }
+
+    .mic-icon {
+      font-size: 80px; /* Larger mic icon */
+      color: #4dd0e1;
+      /*animation: pulse 2s infinite; !* More subtle pulse *!*/
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .listening-indicator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.3); /* Larger indicator */
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 4px solid rgba(77, 208, 225, 0.5); /* Cyan border */
+      opacity: 0;
+      animation: listeningPulse 1.6s infinite ease-out;
+    }
+
+    @keyframes listeningPulse {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+      80% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+    }
+
+    button {
+      background-color: #4dd0e1; /* Cyan button */
+      color: #0c1022; /* Dark text */
+      border: 2px solid #4dd0e1;
+      padding: 15px 35px;
+      font-size: 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.5); /* Slightly stronger shadow */
+      transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, color 0.3s ease-in-out;
+      letter-spacing: 1.5px;
+    }
+
+    button:hover {
+      background-color: rgba(77, 208, 225, 0.8); /* Lighter cyan on hover */
+      transform: scale(1.04);
+      color: #0c1022;
+    }
+
+    .output-container {
+      margin-top: 50px;
+      perspective: 500px; /* More pronounced 3D */
+    }
+
+    .output-box {
+      padding: 30px;
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.6); /* Darker output box */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 10px; /* Taller output box */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e0f7fa; /* Very light cyan text */
+      font-size: 20px; /* Larger text */
+      transition: all 0.5s ease-in-out; /* Smoother transition */
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6); /* More pronounced shadow */
+      transform-style: preserve-3d;
+      /*transform: rotateX(10deg);  !* Add a subtle 3D rotation *!*/
+    }
+
+    .output-box.loading {
+      border-color: #ffeb3b;
+      color: #ffeb3b;
+      animation: pulseBorder 1.5s infinite alternate;
+    }
+
+    @keyframes pulseBorder {
+      0% { border-color: #ffeb3b; }
+      100% { border-color: rgba(255, 255, 255, 0.1); }
+    }
+
+    .output-box.ready {
+      border-color: #b2ff59;
+      color: #b2ff59;
+    }
+
+    #loading {
+      display: none;
+      position: absolute;
+      left: 30px;
+    }
+
+    .output-box.loading #loading {
+      display: inline-block;
+      width: 30px; /* Larger loading indicator */
+      height: 30px;
+      border: 6px solid rgba(255, 255, 255, 0.7);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spinAround 1s infinite linear; /* Faster spin */
+    }
+
+    @keyframes spinAround {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #message {
+      text-align: center;
+      letter-spacing: 1px; /* Increased letter spacing */
+      font-weight: 500;
+    }
+
+    #processedData {
+      margin-top: 10px;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+      border: 2px solid #4dd0e1; /* Cyan border */
+      border-radius: 10px;
+      color: #e0f7fa; /* Light cyan text */
+      min-height: 10px;
+      font-size: 18px; /* Larger font */
+      white-space: pre-line;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+      animation: fadeIn 1s ease-in-out;
+      line-height: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); } /* More pronounced fade-in */
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #processedData em {
+      color: #b2ebf2;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .voice-options {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .voice-button {
+      background-color: rgba(77, 208, 225, 0.2); /* Lighter buttons */
+      color: #fff;
+      border: 2px solid #4dd0e1;
+      padding: 15px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out, color 0.3s ease-in-out;
+      box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+      font-weight: 500;
+    }
+
+    .voice-button:hover {
+      background-color: rgba(77, 208, 225, 0.3); /* Lighter hover */
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    .voice-button i {
+      margin-right: 10px;
+    }
+
+    .feedback-container {
+      margin-top: 35px;
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .feedback-button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 40px; /* Larger icons */
+      cursor: pointer;
+      opacity: 0.7; /* More subtle icons */
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    .feedback-button:hover {
+      opacity: 1;
+      transform: scale(1.2); /* Stronger scale */
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="mic-container">
+      <i class="fas fa-magic mic-icon"></i>
+      <div class="listening-indicator"></div>
+    </div>
+    <h1>IntelleX</h1>
+    <p>Speak your command, and I will assist.</p>
+
+
+    <button id="startBtn">
+      <i class="fas fa-microphone-alt mr-2"></i> Initiate Voice Command
+    </button>
+
+    <div class="output-container">
+      <div id="output" class="output-box">
+        <div id="loading"></div>
+        <span id="message">Awaiting your command...</span>
+      </div>
+
+      <div id="processedData">
+        <em>Output will be displayed here.</em>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const recognition = new (webkitSpeechRecognition || SpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      let currentVoice = 'male';
+
+      const startListening = () => {
+        $('#output').removeClass('ready').addClass('loading');
+        $('#message').text('Listening...');
+        $('#processedData').html('<em>Processing...</em>');
+        $('.listening-indicator').css('opacity', 1);
+        recognition.start();
+      };
+
+      $('#startBtn').click(async function () {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach(track => track.stop());
+          startListening();
+        } catch (error) {
+          console.error('Error with the magic:', error);
+          alert('Microphone permission is required!');
+        }
+      });
+
+      recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript.trim();
+        $('#output').removeClass('loading').addClass('ready');
+        $('#message').text('Command: ' + transcript);
+        $('.listening-indicator').css('opacity', 0);
+
+
+        $.ajax({
+          url: '/get-information',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ query: transcript, voice: currentVoice}),
+          success: function (response) {
+            console.log(response);
+            $('#processedData').html('<strong>Response:</strong> ' + (response.output || 'No output.'));
+          },
+          error: function (xhr, status, error) {
+            $('#processedData').html('<span style="color:red;">Error: ' + xhr.responseText + '</span>');
+            console.error('Error:', xhr.responseText);
+          }
+        });
+      };
+
+      recognition.onerror = function (event) {
+        $('#output').removeClass('loading ready');
+        $('#message').text('Speech recognition error. Please try again.');
+        $('#processedData').html('<span style="color:orange;">Error occurred.</span>');
+        $('.listening-indicator').css('opacity', 0);
+      };
+
+
+
+    });
+
+
+  </script>
+</body>
+</html>
