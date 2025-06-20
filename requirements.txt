@@ -1,0 +1,16 @@
+Flask
+pyttsx3
+wikipedia
+pyautogui
+speedtest-cli
+psutil
+opencv-python
+SpeechRecognition
+pyscreenshot
+platformdirs
+playsound==1.2.2
+requests
+python-dotenv
+pygame
+gTTS
+google-generativeai
